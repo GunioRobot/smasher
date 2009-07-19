@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<smasher>
+
+    <temp_dir>/tmp/</temp_dir>
+    <root_dir>/home/jlecomte/smasher/files/</root_dir>
+    <java_bin>/usr/bin/java</java_bin>
+    <yuicompressor>/home/jlecomte/smasher/yuicompressor-2-4-2.jar</yuicompressor>
+
+    <!-- YUI core -->
+    <group id="yui-core">
+        <file type="css" src="reset.css" />
+        <file type="css" src="fonts.css" />
+        <file type="js" src="yahoo.js" />
+        <file type="js" src="dom.js" />
+        <file type="js" src="event.js" />
+    </group>
+
+    <group id="test">
+        <macro name="DEBUG" value="1" />
+        <file type="js" src="test.js" />
+    </group>
+
+</smasher>

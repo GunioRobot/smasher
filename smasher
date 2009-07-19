@@ -1,0 +1,69 @@
+#!/usr/local/php5/bin/php -d open_basedir=/
+<?php
+
+set_exception_handler('handle_exception');
+
+require 'smasher.php';
+
+$options = array(
+    'conf'     => 'smasher.xml',
+    'type'     => NULL,
+    'group'    => NULL,
+    'nominify' => false
+);
+
+array_shift($argv);
+
+while ($arg = array_shift($argv)) {
+    switch ($arg) {
+        case '-c':
+        case '--conf':
+            $options['conf'] = array_shift($argv) or usage();
+            break;
+        case '-t':
+        case '--type':
+            $options['type'] = array_shift($argv) or usage();
+            break;
+        case '-g':
+        case '--group':
+            $options['group'] = array_shift($argv) or usage();
+            break;
+        case '--no-minify':
+            $options['nominify'] = true;
+            break;
+    }
+}
+
+if (!$options['type'] || !$options['group']) {
+    usage();
+}
+
+$smasher = new Smasher($options['conf']);
+
+if ($options['type'] === 'css') {
+    $content = $smasher->build_css($options['group'], !$options['nominify']);
+} else if ($options['type'] === 'js') {
+    $content = $smasher->build_js($options['group'], !$options['nominify']);
+} else {
+    throw new Exception('Invalid type: ' . $options['type']);
+}
+
+$filename = $options['group'] . '-' . date('YmdHi') . '.' . $options['type'];
+
+file_put_contents($filename, $content);
+
+// -- Functions ---------------------------------------------------------------
+
+function handle_exception($ex)
+{
+    die('Error: ' . $ex->getMessage() . "\n");
+}
+
+function usage()
+{
+    die("Usage: smasher [options]\n" .
+         "  -c, --conf <config>    Use specified config file instead of default\n" .
+         "  -t, --type <css|js>    Process only files of the specified type.\n" .
+         "  -g, --group <group>    Process the specified group.\n" .
+         "      --no-minify        Don't run the code through YUI Compressor.\n");
+}
